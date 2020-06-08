@@ -1,0 +1,13 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\changecarsdata.o
+./release\flchange.o
+./release\jbchange.o
+./release\ddchange.o
+./release\moc_mainwindow.o
+./release\moc_changecarsdata.o
+./release\moc_flchange.o
+./release\moc_jbchange.o
+./release\moc_ddchange.o
+);

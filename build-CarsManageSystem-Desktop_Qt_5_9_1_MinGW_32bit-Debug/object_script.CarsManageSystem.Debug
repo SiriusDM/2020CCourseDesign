@@ -1,0 +1,13 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\changecarsdata.o
+./debug\flchange.o
+./debug\jbchange.o
+./debug\ddchange.o
+./debug\moc_mainwindow.o
+./debug\moc_changecarsdata.o
+./debug\moc_flchange.o
+./debug\moc_jbchange.o
+./debug\moc_ddchange.o
+);
