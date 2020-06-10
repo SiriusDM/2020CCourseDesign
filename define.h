@@ -2,14 +2,13 @@
 #define CARTYPENAME_LENTH 20
 #define PLATE_LENTH 10
 #define CARNAME_LENTH 20
-#define MODE_LENTH 10
-#define RENTNUM_LENTH 20
-#define ID_LENTH 20
-#define GUESTNAME_LENTH 20
-#define PHONE_LENTH 20
-#define TIME_LENTH 18
-#define LINE_LENTH 10240
-#define POINTS_NUM 30;
+#define MODE_LENTH 10;
+#define RENTNUM_LENTH 20;
+#define ID_LENTH 20;
+#define GUESTNAME_LENTH 20;
+#define PHONE_LENTH 20;
+#define TIME_LENTH 18;
+#define PATH_LENTH 256；
 
 struct CarType {
     char code;//车辆类型编码 1~5
