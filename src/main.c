@@ -5,11 +5,11 @@
 
 #include "define.h"
 
-int ctnum,csnum,rsnum;
+char title1[TITLE_LENTH],title2[TITLE_LENTH],title3[TITLE_LENTH];
 
-CarTypeNode *ct_p=NULL,head_ct=NULL;
-CarStatsNode *cs_p=NULL,head_cs=NULL;
-RentStatsNode *rs_p=NULL,head_rs=NULL;
+CarTypeNode *ct_p=NULL,*head_ct=NULL;
+CarStatsNode *cs_p=NULL,*head_cs=NULL;
+RentStatsNode *rs_p=NULL,*head_rs=NULL;
 
 //函数声明部分
 void read_init();//读取初始化
@@ -48,6 +48,8 @@ void cartype_read_init() {
         printf("Open Error !\n");
         return;
     }
+    fscanf(fp,"%[^\n]", title1);
+ //   printf("%s\n",title);
     fseek(fp, 36L, SEEK_SET);
     while ((line = fgets(buf, sizeof(buf), fp))!=NULL) {
         record = strtok(line,delims);
@@ -79,7 +81,7 @@ void cartype_read_init() {
         ct_p->next = ct;
         ct_p = ct;
         ct_p->next = NULL;
-        ct_p->head = cs_p = calloc(1,sizeof(CarStatsNode));
+        ct_p->head = NULL;
     }
     fclose(fp);
 }
@@ -93,6 +95,7 @@ void carstats_read_init() {
         printf("Open Error !\n");
         return;
     }
+    fscanf(fp,"%[^\n]", title2);
     fseek(fp, 72L, SEEK_SET);
     while ((line = fgets(buf, sizeof(buf), fp))!=NULL) {
         record = strtok(line,delims);
@@ -140,8 +143,7 @@ void carstats_read_init() {
         cs_p->next = cs;
         cs_p = cs;
         cs_p->next = NULL;
-        cs_p->head = rs_p = calloc (1, sizeof (RentStatsNode));
-        rs_p->next = NULL;
+        cs_p->head = NULL;
     }
     fclose(fp);
 }
@@ -155,6 +157,7 @@ void rentstats_read_init() {
         printf("Open Error !\n");
         return;
     }
+    fscanf(fp,"%[^\n]", title3);
     fseek(fp, 122L, SEEK_SET);
     while ((line = fgets(buf, sizeof(buf), fp))!=NULL) {
         record = strtok(line,delims);
@@ -219,15 +222,57 @@ void rentstats_read_init() {
 }
 
 void save_file() {
-    void carstats_write();
-    void carstats_write();
-    void rentstats_write();
+    cartype_write();
+    carstats_write();
+    rentstats_write();
 }
-void carstats_write() {
-    FILE *fp = fopen ("CarTypeFile(1).csv","rb");
+void cartype_write() {
+ //   printf("1");
+    FILE *fp = fopen ("CarTypeFile(1).csv","wb+");
     if (fp == NULL) {
         printf("Open Error !\n");
         return;
+    }
+    CarTypeNode *ct_p = head_ct;
+    fprintf(fp,"%s\n",title1);
+    while (ct_p->next != NULL) {
+ //       printf("%c,%s,%d\n",ct_p->next->ct.code,ct_p->next->ct.TypeName,ct_p->next->ct.amount);
+        fprintf(fp,"%c,%s,%d\n",ct_p->next->ct.code,ct_p->next->ct.TypeName,ct_p->next->ct.amount);
+        ct_p = ct_p->next;
+    }
+    fclose(fp);
+}
+
+void carstats_write() {
+     //   printf("1");
+    FILE *fp = fopen ("CarStatsFile(1).csv","wb+");
+    if (fp == NULL) {
+        printf("Open Error !\n");
+        return;
+    }
+    CarStatsNode *cs_p = head_cs;
+    fprintf(fp,"%s\n",title2);
+    while (cs_p->next != NULL) {
+ //       printf("%c,%s,%d\n",ct_p->next->ct.code,ct_p->next->ct.TypeName,ct_p->next->ct.amount);
+        fprintf(fp,"%d,%s,%c,%s,%s,%.2f,%c\n",cs_p->next->cs.CarNum,cs_p->next->cs.plate,cs_p->next->cs.code,cs_p->next->cs.CarName,cs_p->next->cs.mode,cs_p->next->cs.rent,cs_p->next->cs.stats);
+        cs_p = cs_p->next;
+    }
+    fclose(fp);
+}
+
+void rentstats_write(){
+    FILE *fp = fopen("RentStatsFile(1).csv","wb+");
+    if (fp == NULL) {
+        printf("Open Error !\n");
+        return;
+    }
+    RentStatsNode *rs_p =head_rs;
+    fprintf(fp,"%s\n",title3);
+    RentStats rs_n;
+    while (rs_p->next !=NULL) {
+        rs_n = rs_p->next->rs;
+        fprintf(fp,"%s,%s,%s,%s,%d,%s,%s,%.2f,%s,%.2f,%.2f\n",rs_n.RentNum,rs_n.id,rs_n.name,rs_n.phone,rs_n.CarNum,rs_n.TakeTime,rs_n.BackTime,rs_n.deposit,rs_n.rBackTime,rs_n.fee,rs_n.rfee);
+        rs_p = rs_p->next;
     }
     fclose(fp);
 }

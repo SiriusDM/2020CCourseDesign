@@ -9,7 +9,8 @@
 #define PHONE_LENTH 20
 #define TIME_LENTH 18
 #define LINE_LENTH 10240
-#define POINTS_NUM 30;
+#define POINTS_NUM 30
+#define TITLE_LENTH 1024
 
 struct CarType {
     char code;//车辆类型编码 1~5
