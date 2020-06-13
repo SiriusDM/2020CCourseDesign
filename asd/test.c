@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 int main() {
-    float a;
-    scanf("%f",&a);
-    printf("%f",a);
-    if (a == 0) printf("1");
+    char a[20],b[20];
+    scanf("%s%s",a,b);
+//    printf("%s %s",a,b);
+    printf("%d\n%d\n",atoi(a),atoi(b));
+
 }

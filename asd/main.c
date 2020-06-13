@@ -44,6 +44,8 @@ void end_word();//结束语
 void new_ok();//信息录入成功
 void delete_ok();//信息删除成功
 void change_ok();//信息修改成功
+int kmp(char* s, char* p); //kmp算法
+void search_not();//查询失败
 //输出调试用
 void watch_cartype(); 
 void watch_carstats();
@@ -629,30 +631,205 @@ void function_change() {
             break;
     }
 } 
+
 void change_cartype() {} //修改车辆分类信息
+
 void change_carstats() {} //修改车辆基本信息
+
 void change_rentstats() {} //修改订单信息
+
 void function_search() {
-    int inf = 0;
+    CarStatsNode *cs_p=head_cs;
+    RentStatsNode *rs_p=head_rs;
+    int inf = 0,flag=0,inf2;
+    int types = 0,_carnumr[1024],_carnumr1;
+    char _typenamecode[10],_startime[TIME_LENTH],_endtime[TIME_LENTH];
+    char _typename[CARTYPENAME_LENTH],_plate[PLATE_LENTH],_carname[CARNAME_LENTH],_code,_id[ID_LENTH],_phone[PHONE_LENTH];
     printf("请选择您要查找的信息（1——车辆分类信息||2——车辆基本信息||3——订单信息）:");
         scanf("%d",&inf);
         switch (inf) {
             case 1:
-                change_cartype();
+                flag=0;
+                cs_p = head_cs;
+                printf("请输入您想查询几款车型?(0~5): ");
+                scanf("%d",&types);
+                printf("\n");
+                if (!types) { //模糊查询
+                    while (cs_p->next !=NULL) {
+                        if (cs_p->next->cs.stats == 'y') {
+                            CarStats cs = cs_p->next->cs;
+                            printf("车牌号: %s\n",cs.plate);
+                            printf("车辆类型编码: %c\n",cs.code);
+                            printf("车辆名称: %s\n",cs.CarName);
+                            printf("排档方式: %s\n",cs.mode); 
+                            printf("每日租金: %.2f\n\n",cs.rent); 
+                            flag=1;
+                        }
+                        cs_p = cs_p->next;
+                    }
+                }
+                else {
+                    for (int i=1;i<=types;i++) {  //处理输入车型(综合查找)
+                        printf("车型%d: ",i);
+                        scanf("%s", _typename);
+                        printf("\n");
+                        if (!strcmp(_typename,"经济型")) _typenamecode[i]='1';
+                        else if (!strcmp(_typename,"商务型")) _typenamecode[i]='2';
+                        else if (!strcmp(_typename,"豪华型")) _typenamecode[i]='3';
+                        else if (!strcmp(_typename,"SUV")) _typenamecode[i]='4';
+                        else _typenamecode[i]='5';
+ //                       printf("%c ",_typenamecode[i]);
+                    }
+                    for (int i=1;i<=types;i++) {
+                        cs_p = head_cs;
+                        while (cs_p->next !=NULL) {
+                            if (cs_p->next->cs.stats == 'y' && cs_p->next->cs.code == _typenamecode[i]) {
+                                CarStats cs = cs_p->next->cs;
+                                printf("车牌号: %s\n",cs.plate);
+                                printf("车辆类型编码: %c\n",cs.code);
+                                printf("车辆名称: %s\n",cs.CarName);
+                                printf("排档方式: %s\n",cs.mode); 
+                                printf("每日租金: %.2f\n\n",cs.rent); 
+                                flag=1;
+                            }
+                            cs_p = cs_p->next;
+                        }
+                    }
+                }
+                if (!flag) search_not();
                 break;
             case 2:
-                change_carstats();
+                flag=0;
+                cs_p = head_cs;
+                printf("请输入查询条件(不确定条件输入'-')\n");
+                printf("车牌号: ");
+                scanf("%s", _plate);
+                printf("车辆名称: ");
+                scanf("%s",_carname);
+                printf("出租状态: ");
+                getchar();scanf("%c",&_code);getchar();
+                while (cs_p->next !=NULL) {
+                    CarStats cs = cs_p->next->cs;
+//                    printf("%d ",kmp(cs.plate,_plate));
+                    if ( ( kmp(cs.plate,_plate) || _plate[0] == '-' ) && ( kmp(cs.CarName,_carname) || _carname[0]=='-') && ( cs.code == _code || _code == '-') ) {
+                        printf("\n");
+                        printf("车牌号: %s\n",cs.plate);
+                        printf("车辆类型编码: %c\n",cs.code);
+                        printf("车辆名称: %s\n",cs.CarName);
+                        printf("排档方式: %s\n",cs.mode); 
+                        printf("每日租金: %.2f\n\n",cs.rent); 
+                        flag=1;
+                    }
+                    cs_p = cs_p->next;
+                }
+                if (!flag) search_not();
                 break;
             case 3:
-                change_rentstats();
+                flag=0;
+                rs_p = head_rs;
+                printf("请输入查询条件(1——客人信息||2——车辆信息||3——租车时间范围)\n");
+                scanf("%d",&inf2);
+                if (inf2 ==1 ) { //客人信息查询
+                    printf("请输入客人信息(不确定输入'-')\n");
+                    printf("身份证号: ");
+                    scanf("%s", _id);
+                    printf("电话号码: ");
+                    scanf("%s", _phone);
+                    while (rs_p->next != NULL) {
+                        RentStats rs = rs_p->next->rs;
+                        if ( (kmp(rs.id,_id) || _id[0] == '-' ) && ( kmp(rs.phone,_phone) || _phone[0] == '-') ) {
+                            flag = 1;
+                            printf("\n");
+                            printf("订单编号: %s\n",rs.RentNum);
+                            printf("身份证号: %s\n",rs.id);
+                            printf("客人姓名: %s\n",rs.name);
+                            printf("手机号码: %s\n",rs.phone);
+                            printf("租用车辆编号: %d\n",rs.CarNum);
+                            printf("取车时间: %s\n",rs.TakeTime); 
+                            printf("预约还车时间: %s\n",rs.BackTime);
+                            printf("押金: %.2f\n",rs.deposit);
+                            printf("实际还车时间: %s\n",rs.rBackTime);
+                            printf("应缴费用: %.2f\n",rs.fee);
+                            printf("实缴费用: %.2f\n",rs.rfee);
+                        }
+                        rs_p = rs_p -> next;
+                    }
+                }
+                else if (inf2 == 2) {
+                    _carnumr1 = 0;
+                    cs_p = head_cs;
+                    printf("请输入车辆信息(不确定输入'-')\n");
+                    printf("车牌号码: ");
+                    scanf("%s", _plate);
+                    printf("车辆名称: ");
+                    scanf("%s", _carname);
+                    while (cs_p->next !=NULL) {
+                        CarStats cs = cs_p->next->cs;
+                        if ( ( kmp(cs.plate,_plate) || _plate[0] == '-') && ( kmp(cs.CarName,_carname) || _carname[0] == '-') ) {
+                            _carnumr[_carnumr1++] = cs.CarNum;
+                        }
+                        cs_p = cs_p->next;
+                    }
+                    while (rs_p->next != NULL) {
+                        RentStats rs = rs_p->next->rs;
+                        for (int i=0;i<_carnumr1;i++) {
+                            if ( rs.CarNum == _carnumr[i]) {
+                                flag = 1;
+                                printf("\n");
+                                printf("订单编号: %s\n",rs.RentNum);
+                                printf("身份证号: %s\n",rs.id);
+                                printf("客人姓名: %s\n",rs.name);
+                                printf("手机号码: %s\n",rs.phone);
+                                printf("租用车辆编号: %d\n",rs.CarNum);
+                                printf("取车时间: %s\n",rs.TakeTime); 
+                                printf("预约还车时间: %s\n",rs.BackTime);
+                                printf("押金: %.2f\n",rs.deposit);
+                                printf("实际还车时间: %s\n",rs.rBackTime);
+                                printf("应缴费用: %.2f\n",rs.fee);
+                                printf("实缴费用: %.2f\n",rs.rfee);
+                            }
+                        }
+                        rs_p = rs_p -> next;
+                    }
+                }
+                else if (inf2 == 3) {
+                    printf("请输入时间区间(格式xxxx/xx/xx-xx:xx)\n");
+                    printf("起始时间: ");
+                    scanf("%s",_startime);
+                    printf("终止事件: ");
+                    scanf("%s",_endtime);
+                    while (rs_p->next !=NULL) {
+                        RentStats rs = rs_p->next->rs;
+                        if ( strcmp(_startime,rs.TakeTime)<=0 && strcmp(_endtime,rs.rBackTime)>=0 ) {
+                                flag = 1;
+                                printf("\n");
+                                printf("订单编号: %s\n",rs.RentNum);
+                                printf("身份证号: %s\n",rs.id);
+                                printf("客人姓名: %s\n",rs.name);
+                                printf("手机号码: %s\n",rs.phone);
+                                printf("租用车辆编号: %d\n",rs.CarNum);
+                                printf("取车时间: %s\n",rs.TakeTime); 
+                                printf("预约还车时间: %s\n",rs.BackTime);
+                                printf("押金: %.2f\n",rs.deposit);
+                                printf("实际还车时间: %s\n",rs.rBackTime);
+                                printf("应缴费用: %.2f\n",rs.fee);
+                                printf("实缴费用: %.2f\n",rs.rfee);
+                        }
+                        rs_p = rs_p->next;
+                    }
+                }
+                if (!flag) printf("很抱歉!没有符合条件的订单信息");
                 break;
             default:
                 printf("信息选择错误 !\n");
                 break;
         }
 } 
+
 void search_cartype() {} //查询车辆分类信息
+
 void search_carstats() {} //查询车辆基本信息
+
 void search_rentstats() {} //查询订单信息
 
 void watch_cartype() {
@@ -682,6 +859,8 @@ void watch_rentstats() {
 }
 
 void func_list() {
+    while (getchar()!='\n');
+    while (getchar()!='\n');
     printf("\n\n");
     printf("*************欢迎使用车辆租赁管理系统************\n");
     printf("====================功能列表=====================\n");
@@ -712,3 +891,46 @@ void delete_ok() {
 void change_ok() {
     printf("信息修改成功!\n");
 }
+
+int kmp(char* s, char* p)  {  
+    int i = 0;  
+    int j = 0;  
+    int next[20];
+    int sLen = strlen(s);  
+    int pLen = strlen(p);  
+    next[0] = -1;  
+    int k = -1;  
+    while (j < pLen - 1)  {  
+        //p[k]表示前缀，p[j]表示后缀    
+        if (k == -1 || p[j] == p[k])  {  
+            ++j;  
+            ++k;  
+            if (p[j] != p[k])  
+                next[j] = k;   
+            else  
+                next[j] = next[k];  
+        }  
+        else  {  
+            k = next[k];  
+        }  
+    }  
+    i=0;j=0;
+    while (i < sLen && j < pLen)  {  
+        if (j == -1 || s[i] == p[j])  {  
+            i++;  
+            j++;  
+        }  
+        else  {  
+            j = next[j];  
+        }  
+    }  
+    if (j == pLen)  
+        return 1;  
+    else  
+        return 0;  
+}  
+
+void search_not() {
+    printf("很抱歉！没有符合您要求的车辆\n");
+}
+
