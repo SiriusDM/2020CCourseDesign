@@ -367,7 +367,7 @@ void function_new() {
             getchar();scanf("%c", &_code);getchar();
             printf("车辆名称: ");
             scanf("%s", _carname);
-            printf("拍档方式: ");
+            printf("排档方式: ");
             scanf("%s", _mode);
             printf("每日租金: ");
             scanf("%f", &_rent);
@@ -537,21 +537,95 @@ void delete_rentstats(char _rentnum[RENTNUM_LENTH]) {
 } //删除订单信息
 
 void function_change() {
-    int inf;
-    printf("请选择您要录入的信息（1——车辆分类信息||2——车辆基本信息||3——订单信息）:");
+    CarTypeNode *ct_p=head_ct;
+    CarStatsNode *cs_p=head_cs;
+    RentStatsNode *rs_p=head_rs;
+    int inf=0;
+    char _code,_stats;
+    char _typename[CARTYPENAME_LENTH],_rentnum[RENTNUM_LENTH],_id[ID_LENTH],_name[GUESTNAME_LENTH],_phone[PHONE_LENTH],_taketime[TIME_LENTH],_backtime[TIME_LENTH],_rbacktime[TIME_LENTH],_plate[PLATE_LENTH],_carname[CARNAME_LENTH],_mode[MODE_LENTH];
+    int _amount=0,_carnum=0;
+    float _deposit=0,_fee=0,_rfee=0,_rent=0;
+    printf("请选择您要修改的信息（1——车辆分类信息||2——车辆基本信息||3——订单信息）: ");
     scanf("%d",&inf);
     switch (inf) {
         case 1:
-            change_cartype();
+            printf("请输入车辆分类信息(不修改部分输入'-')\n");
+            printf("车辆类型编码: ");
+            getchar();
+            scanf("%c",&_code);
+            getchar();
+
+            while (ct_p->next !=NULL) {
+                if (ct_p->next->ct.code == _code) {
+                    CarType ct = ct_p->next->ct;
+                    printf("车辆类型名称: %s    修改为: ",ct.TypeName);
+                    scanf("%s",_typename); if (_typename[0] != '-') strcpy(ct_p->next->ct.TypeName,_typename); 
+                    printf("库存数量: %d     修改为: ",ct.amount);
+                    scanf("%d",&_amount); if (_amount) ct_p->next->ct.amount = _amount;
+                    break;
+                }
+                ct_p = ct_p->next;
+            }
+//            printf("%c %s %d",_code,_typename,_amount);
             break;
         case 2:
-            change_carstats();
+            printf("请输入车辆基本信息(不修改部分输入'-')\n");
+            printf("请输入车辆编号: ");
+            scanf("%d",&_carnum);
+            while (cs_p->next !=NULL) {
+                if (cs_p->next->cs.CarNum == _carnum) {
+                    CarStats cs = cs_p->next->cs;
+                    printf("车牌号: %s     修改为: ",cs.plate);
+                    scanf("%s", _plate); if (_plate[0] != '-') strcpy(cs_p->next->cs.plate,_plate); 
+                    printf("车辆类型编码: %c     修改为: ",cs.code);
+                    getchar();scanf("%c", &_code);getchar(); if (_code != '-') cs_p->next->cs.code = _code;
+                    printf("车辆名称: %s     修改为: ",cs.CarName);
+                    scanf("%s", _carname); if (_carname[0] != '-') strcpy(cs_p->next->cs.CarName,_carname); 
+                    printf("排档方式: %s     修改为: ",cs.mode);
+                    scanf("%s", _mode); if (_mode[0] != '-') strcpy(cs_p->next->cs.mode,_mode); 
+                    printf("每日租金: %.2f     修改为: ",cs.rent); 
+                    scanf("%f", &_rent); if (_rent != 0) cs_p->next->cs.rent = _rent;
+                    printf("出租状态: %c     修改为: ",cs.stats);
+                    getchar();scanf("%c", &_stats);getchar(); if (_stats != '-') cs_p->next->cs.stats = _stats;
+                    break;
+                }
+                cs_p = cs_p->next;
+            }
             break;
         case 3:
-            change_rentstats();
+            printf("请输入订单信息(不修改部分输入'-')\n");
+            printf("订单编号: ");
+            scanf("%s", _rentnum);
+            while (rs_p->next != NULL) {
+                if (!strcmp(rs_p->next->rs.RentNum,_rentnum)) {
+                    RentStats rs = rs_p->next->rs;
+                    printf("身份证号: %s     修改为: ",rs.id);
+                    scanf("%s",_id);  if (_id[0] != '-') strcpy(rs_p->next->rs.id,_id); 
+                    printf("客人姓名: %s     修改为: ",rs.name);
+                    scanf("%s", _name); if (_name[0] != '-') strcpy(rs_p->next->rs.name,_name); 
+                    printf("手机号码: %s     修改为: ",rs.phone);
+                    scanf("%s", _phone); if (_phone[0] != '-') strcpy(rs_p->next->rs.phone,_phone); 
+                    printf("租用车辆编号: %d     修改为: ",rs.CarNum);
+                    scanf("%d", &_carnum); if (_carnum) rs_p->next->rs.CarNum = _carnum;
+                    printf("取车时间: %s     修改为: ",rs.TakeTime);
+                    scanf("%s", _taketime); if (_taketime[0] != '-') strcpy(rs_p->next->rs.TakeTime,_taketime); 
+                    printf("预约还车时间: %s     修改为: ",rs.BackTime);
+                    scanf("%s", _backtime); if (_backtime[0] != '-') strcpy(rs_p->next->rs.BackTime,_backtime); 
+                    printf("押金: %.2f     修改为: ",rs.deposit);
+                    scanf("%f", &_deposit); if (_deposit != 0) rs_p->next->rs.deposit = _deposit;
+                    printf("实际还车时间: %s     修改为: ",rs.rBackTime);
+                    scanf("%s", _rbacktime); if (_rbacktime[0] != '-') strcpy(rs_p->next->rs.rBackTime,_rbacktime);
+                    printf("应缴费用: %.2f     修改为: ",rs.fee);
+                    scanf("%f", &_fee); if (_fee != 0) rs_p->next->rs.fee = _fee;
+                    printf("实缴费用: %.2f     修改为: ",rs.rfee);
+                    scanf("%f", &_rfee); if (_rfee != 0) rs_p->next->rs.rfee = _rfee;
+                    break;
+                }
+                rs_p = rs_p ->next;
+            }
             break;
         default:
-            printf("信息选择错误 !\n");
+            printf("信息选择错误!\n");
             break;
     }
 } 
