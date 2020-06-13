@@ -28,9 +28,9 @@ void new_cartype(char _code,char _typename[CARTYPENAME_LENTH],int _amount); // б
 void new_carstats(int _carnum,char _plate[PLATE_LENTH],char _code,char _carname[CARNAME_LENTH],char _mode[MODE_LENTH],float _rent,char _stats); //б╪хКЁ╣а╬╩Ы╠╬пео╒
 void new_rentstats(char _rentnum[RENTNUM_LENTH],char _id[ID_LENTH],char _name[GUESTNAME_LENTH],char _phone[PHONE_LENTH],int _carnum,char _taketime[TIME_LENTH],char _backtime[TIME_LENTH],float _deposit,char _rbacktime[TIME_LENTH],float _fee,float _rfee); //б╪хК╤╘╣╔пео╒
 void function_delete(); //?  и╬ЁЩ╧╕дэ
-void delete_cartype(); //и╬ЁЩЁ╣а╬╥жюЮпео╒
-void delete_carstats(); //и╬ЁЩЁ╣а╬╩Ы╠╬пео╒
-void delete_rentstats(); //и╬ЁЩ╤╘╣╔пео╒
+void delete_cartype(char _code); //и╬ЁЩЁ╣а╬╥жюЮпео╒
+void delete_carstats(int _carnum); //и╬ЁЩЁ╣а╬╩Ы╠╬пео╒
+void delete_rentstats(char _rentnum[RENTNUM_LENTH]); //и╬ЁЩ╤╘╣╔пео╒
 void function_change();  //?  пч╦д╧╕дэ
 void change_cartype(); //пч╦дЁ╣а╬╥жюЮпео╒
 void change_carstats(); //пч╦дЁ╣а╬╩Ы╠╬пео╒
@@ -56,6 +56,7 @@ int main() {
         func_list();
         scanf("%d",&func_type);
         function_select(func_type);
+//        printf("1");
         save_file();
     }
     end_word();  
@@ -416,6 +417,7 @@ void new_cartype(char _code,char _typename[CARTYPENAME_LENTH],int _amount) {
     ct->head = NULL;
     ct->next =NULL;
     ct_p->next = ct; 
+    new_ok();
 //    watch_cartype();
 } //б╪хКЁ╣а╬╥жюЮпео╒
 
@@ -433,6 +435,7 @@ void new_carstats(int _carnum,char _plate[PLATE_LENTH],char _code,char _carname[
     cs->head = NULL;
     cs->next = NULL;
     cs_p->next = cs;
+    new_ok();
  //   watch_carstats();
 }//б╪хКЁ╣а╬╩Ы╠╬пео╒
 
@@ -453,31 +456,86 @@ void new_rentstats(char _rentnum[RENTNUM_LENTH],char _id[ID_LENTH],char _name[GU
     rs->rs.rfee = _rfee;
     rs->next = NULL;
     rs_p->next = rs;
+    new_ok();
 //    watch_rentstats();
 } //б╪хК╤╘╣╔пео╒
 
 void function_delete() {
-    int inf;
-    printf("гКя║тЯдЗр╙б╪хК╣дпео╒ё╗1║╙║╙Ё╣а╬╥жюЮпео╒||2║╙║╙Ё╣а╬╩Ы╠╬пео╒||3║╙║╙╤╘╣╔пео╒ё╘: ");
+    int inf,_carnum;
+    char _code;
+    char _rentnum[RENTNUM_LENTH];
+    printf("гКя║тЯдЗр╙и╬ЁЩ╣дпео╒ё╗1║╙║╙Ё╣а╬╥жюЮпео╒||2║╙║╙Ё╣а╬╩Ы╠╬пео╒||3║╙║╙╤╘╣╔пео╒ё╘: ");
     scanf("%d",&inf);
     switch (inf) {
        case 1:
-            delete_cartype();
+            printf("гКйДхКЁ╣а╬юЮпм╠ЮбК: ");
+            getchar();scanf("%c",&_code);getchar();
+//           printf("%c\n",_code);
+            delete_cartype(_code);
+//           printf("1");
             break;
         case 2:
-            delete_carstats();
+            printf("гКйДхКЁ╣а╬╠Ю╨е: ");
+            scanf("%d",&_carnum);
+            delete_carstats(_carnum);
             break;
         case 3:
-            delete_rentstats();
+            printf("гКйДхК╤╘╣╔╠Ю╨е: ");
+            scanf("%s",_rentnum);
+            delete_rentstats(_rentnum);
             break;
         default:
             printf("пео╒я║тЯ╢МнС !\n");
             break;
     }
 } 
-void delete_cartype() {} //и╬ЁЩЁ╣а╬╥жюЮпео╒
-void delete_carstats() {} //и╬ЁЩЁ╣а╬╩Ы╠╬пео╒
-void delete_rentstats() {} //и╬ЁЩ╤╘╣╔пео╒
+
+void delete_cartype(char _code) {
+    CarTypeNode *ct_p = head_ct; 
+    while (ct_p->next !=NULL) {
+        if (ct_p->next->ct.code == _code) {
+//                printf("1");
+                CarTypeNode *ct = ct_p->next;
+ //               printf("2");
+                ct_p->next = ct->next;
+ //               printf("3");
+                free(ct);
+ //               printf("4");
+                break;
+        }
+        ct_p = ct_p->next;
+    }
+    delete_ok();
+} //и╬ЁЩЁ╣а╬╥жюЮпео╒
+
+void delete_carstats(int _carnum) {
+    CarStatsNode *cs_p = head_cs;
+    while (cs_p->next !=NULL) {
+        if (cs_p->next->cs.CarNum == _carnum) {
+            CarStatsNode *cs = cs_p->next;
+            cs_p->next = cs->next;
+            free(cs);
+            break;
+        }
+        cs_p = cs_p->next;
+    }
+    delete_ok();
+} //и╬ЁЩЁ╣а╬╩Ы╠╬пео╒
+
+void delete_rentstats(char _rentnum[RENTNUM_LENTH]) {
+    RentStatsNode *rs_p = head_rs;
+    while (rs_p->next !=NULL) {
+        if (!strcmp(rs_p->next->rs.RentNum, _rentnum)) {
+            RentStatsNode *rs = rs_p->next;
+            rs_p->next = rs->next;
+            free(rs);
+            break;
+        }
+        rs_p = rs_p->next;
+    }
+    delete_ok();
+} //и╬ЁЩ╤╘╣╔пео╒
+
 void function_change() {
     int inf;
     printf("гКя║тЯдЗр╙б╪хК╣дпео╒ё╗1║╙║╙Ё╣а╬╥жюЮпео╒||2║╙║╙Ё╣а╬╩Ы╠╬пео╒||3║╙║╙╤╘╣╔пео╒ё╘:");
