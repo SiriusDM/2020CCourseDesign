@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "define.h"
+#include "change.h"
 
 char title1[TITLE_LENTH],title2[TITLE_LENTH],title3[TITLE_LENTH];
 
@@ -12,17 +13,38 @@ CarStatsNode *cs_p=NULL,*head_cs=NULL;
 RentStatsNode *rs_p=NULL,*head_rs=NULL;
 
 //函数声明部分
-void read_init();//读取初始化
+void read_init();//? 读取初始化
 void cartype_read_init(); //车辆分类信息读取初始化
 void carstats_read_init(); //车辆基本信息读取初始化
 void rentstats_read_init(); //租车信息读取初始化
-void save_file(); //文件保存函数
+void save_file(); //?  文件保存函数
 void cartype_write(); //向文件写入车辆分类信息
 void carstats_write(); //向文件写入车辆基本信息
 void rentstats_write(); //向文件写入租车信息
+void function_select();//?  功能选择0.返回 1.录入2.删除3.修改4.查询5.分析*/ 
+void function_new(); //?  录入功能
+void new_cartype(); //车辆分类信息录入
+void new_carstats(); //车辆基本信息录入
+void new_rentstats(); //订单信息录入
+void function_delete(); //?  删除功能
+void delete_cartype(); //删除车辆分类信息
+void delete_carstats(); //删除车辆基本信息
+void delete_rentstats(); //删除租赁信息
+void function_change();  //?  修改功能
+void change_cartype(); //修改车辆分类信息
+void change_carstats(); //修改车辆基本信息
+void change_rentstats(); //修改订单信息
+void function_search(); //?  查询功能
+void search_cartype(); //查询车辆分类信息
+void search_carstats(); //查询车辆基本信息
+void search_rentstats(); //查询订单信息
 
 int main() {
+    system("chcp 65001");
     read_init();  //读入文件
+    int func_type;
+    scanf("%d",&func_type);
+    function_select(func_type);
     save_file();  //保存文件
     return 0;
 }
@@ -38,6 +60,7 @@ void read_init() {
     carstats_read_init();
     rentstats_read_init();
 }
+
 void cartype_read_init() {
     char buf[LINE_LENTH];
     char *line,*record;
@@ -85,6 +108,7 @@ void cartype_read_init() {
     }
     fclose(fp);
 }
+
 void carstats_read_init() {
     char buf[LINE_LENTH];
     char *line,*record;
@@ -147,6 +171,7 @@ void carstats_read_init() {
     }
     fclose(fp);
 }
+
 void rentstats_read_init() {
     char buf[LINE_LENTH];
     char *line,*record;
@@ -226,6 +251,7 @@ void save_file() {
     carstats_write();
     rentstats_write();
 }
+
 void cartype_write() {
  //   printf("1");
     FILE *fp = fopen ("CarTypeFile(1).csv","wb+");
@@ -276,3 +302,124 @@ void rentstats_write(){
     }
     fclose(fp);
 }
+
+void function_select(int func_type) {
+    switch (func_type) {
+        case 1:
+            function_new();
+            break;
+        case 2:
+            function_delete();
+            break;
+        case 3:
+            function_change();
+            break;
+        case 4:
+            function_search();
+            break;
+    }
+}
+
+void function_new() {
+    int inf;
+    char _code;
+    char _typename[CARTYPENAME_LENTH];
+    int _amount;
+    FILE *fp=fopen("test.csv","wb+");
+    printf("请选择录入的信息（1——车辆分类信息||2——车辆基本信息||3——车辆租赁信息）:\n");
+    scanf("%d",&inf);
+    switch (inf) {
+        case 1:
+            printf("请输入车辆分类信息\n");
+            printf("车辆类型编码:");
+            getchar();
+            scanf("%c",&_code);
+            getchar();
+            printf("%c",_code);
+            printf("车辆类型名称:");
+            scanf("%s",_typename);
+            printf("库存数量:");
+            scanf("%d",&_amount);
+            printf("%c %s %d",_code,_typename,_amount);
+            new_cartype();
+            break;
+        case 2:
+            new_carstats();
+            break;
+        case 3:
+            new_rentstats();
+            break;
+        default:
+            printf("信息选择错误 !\n");
+            break;
+    }
+}
+void new_cartype() {} //车辆分类信息录入
+void new_carstats() {}//车辆基本信息录入
+void new_rentstats() {} //订单信息录入
+void function_delete() {
+    int inf;
+    printf("请选择删除的信息（1——车辆分类信息||2——车辆基本信息||3——车辆租赁信息）:\n");
+    scanf("%d",&inf);
+    switch (inf) {
+       case 1:
+            delete_cartype();
+            break;
+        case 2:
+            delete_carstats();
+            break;
+        case 3:
+            delete_rentstats();
+            break;
+        default:
+            printf("信息选择错误 !\n");
+            break;
+    }
+} 
+void delete_cartype() {} //删除车辆分类信息
+void delete_carstats() {} //删除车辆基本信息
+void delete_rentstats() {} //删除租赁信息
+void function_change() {
+    int inf;
+    printf("请选择修改的信息（1——车辆分类信息||2——车辆基本信息||3——车辆租赁信息）:\n");
+    scanf("%d",&inf);
+    switch (inf) {
+        case 1:
+            change_cartype();
+            break;
+        case 2:
+            change_carstats();
+            break;
+        case 3:
+            change_rentstats();
+            break;
+        default:
+            printf("信息选择错误 !\n");
+            break;
+    }
+}  //?  修改功能
+void change_cartype() {} //修改车辆分类信息
+void change_carstats() {} //修改车辆基本信息
+void change_rentstats() {} //修改订单信息
+void function_search() {
+    int inf = 0;
+    printf("请选择修改的信息（1——车辆分类信息||2——车辆基本信息||3——车辆租赁信息）:\n");
+        scanf("%d",&inf);
+        switch (inf) {
+            case 1:
+                change_cartype();
+                break;
+            case 2:
+                change_carstats();
+                break;
+            case 3:
+                change_rentstats();
+                break;
+            default:
+                printf("信息选择错误 !\n");
+                break;
+        }
+} 
+void search_cartype() {} //查询车辆分类信息
+void search_carstats() {} //查询车辆基本信息
+void search_rentstats() {} //查询订单信息
