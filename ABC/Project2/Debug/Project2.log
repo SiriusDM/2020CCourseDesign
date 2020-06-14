@@ -1,0 +1,4 @@
+﻿  a.c
+E:\DMoon\2020CCoursDesign\2020CCourseDesign\a.c(6,31): warning C4273: “GetConsoleWindow”: dll 链接不一致
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\consoleapi3.h(177,1): message : 参见“GetConsoleWindow”的前一个定义
+  Project2.vcxproj -> E:\DMoon\2020CCoursDesign\2020CCourseDesign\ABC\Project2\Debug\Project2.exe

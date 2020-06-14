@@ -7,6 +7,7 @@
 #include "define.h"
 
 char title1[TITLE_LENTH],title2[TITLE_LENTH],title3[TITLE_LENTH];
+char mons[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
 
 int now_car_num;
 
@@ -52,6 +53,7 @@ void cartype_inf();
 void month_money();
 void year_money();
 void ten_high();
+int calc_day(char *a,char *b);
 //输出调试用
 void watch_cartype(); 
 void watch_carstats();
@@ -647,6 +649,9 @@ void change_carstats() {} //修改车辆基本信息
 void change_rentstats() {} //修改订单信息
 
 void function_search() {
+    FILE *fp1 = fopen("车辆分类信息查询结果.csv","wb+");
+    FILE *fp2 = fopen("车辆基本信息查询结果.csv","wb+");
+    FILE *fp3 = fopen("订单信息查询结果.csv","wb+");
     CarStatsNode *cs_p=head_cs;
     RentStatsNode *rs_p=head_rs;
     int inf = 0,flag=0,inf2;
@@ -661,16 +666,22 @@ void function_search() {
                 cs_p = head_cs;
                 printf("请输入您想查询几款车型?(0~5): ");
                 scanf("%d",&types);
+                fprintf(fp1,"车牌号,车辆类型编码,车辆名称,排档方式,每日租金\n");
                 printf("\n");
                 if (!types) { //模糊查询
                     while (cs_p->next !=NULL) {
                         if (cs_p->next->cs.stats == 'y') {
                             CarStats cs = cs_p->next->cs;
                             printf("车牌号: %s\n",cs.plate);
+                            fprintf(fp1,"%s,",cs.plate);
                             printf("车辆类型编码: %c\n",cs.code);
+                            fprintf(fp1," %c,",cs.code);
                             printf("车辆名称: %s\n",cs.CarName);
+                            fprintf(fp1,"%s,",cs.CarName);
                             printf("排档方式: %s\n",cs.mode); 
+                            fprintf(fp1,"%s,",cs.mode);
                             printf("每日租金: %.2f\n\n",cs.rent); 
+                            fprintf(fp1,"%.2f\n",cs.rent); 
                             flag=1;
                         }
                         cs_p = cs_p->next;
@@ -694,10 +705,15 @@ void function_search() {
                             if (cs_p->next->cs.stats == 'y' && cs_p->next->cs.code == _typenamecode[i]) {
                                 CarStats cs = cs_p->next->cs;
                                 printf("车牌号: %s\n",cs.plate);
+                                fprintf(fp1,"%s,",cs.plate);
                                 printf("车辆类型编码: %c\n",cs.code);
+                                fprintf(fp1," %c,",cs.code);
                                 printf("车辆名称: %s\n",cs.CarName);
+                                fprintf(fp1,"%s,",cs.CarName);
                                 printf("排档方式: %s\n",cs.mode); 
+                                fprintf(fp1,"%s,",cs.mode);
                                 printf("每日租金: %.2f\n\n",cs.rent); 
+                                fprintf(fp1,"%.2f\n",cs.rent);  
                                 flag=1;
                             }
                             cs_p = cs_p->next;
@@ -716,16 +732,22 @@ void function_search() {
                 scanf("%s",_carname);
                 printf("出租状态: ");
                 getchar();scanf("%c",&_code);getchar();
+                fprintf(fp2,"车牌号,车辆类型编码,车辆名称,排档方式,每日租金\n");
                 while (cs_p->next !=NULL) {
                     CarStats cs = cs_p->next->cs;
 //                    printf("%d ",kmp(cs.plate,_plate));
                     if ( ( kmp(cs.plate,_plate) || _plate[0] == '-' ) && ( kmp(cs.CarName,_carname) || _carname[0]=='-') && ( cs.code == _code || _code == '-') ) {
                         printf("\n");
+                        fprintf(fp2,"%s,",cs.plate);
                         printf("车牌号: %s\n",cs.plate);
+                        fprintf(fp2,"%c,",cs.code);
                         printf("车辆类型编码: %c\n",cs.code);
                         printf("车辆名称: %s\n",cs.CarName);
+                        fprintf(fp2,"%s,",cs.CarName);
                         printf("排档方式: %s\n",cs.mode); 
-                        printf("每日租金: %.2f\n\n",cs.rent); 
+                        fprintf(fp2," %s,",cs.mode); 
+                        printf("每日租金: %.2f\n\n",cs.rent);
+                        fprintf(fp2,"%.2f\n",cs.rent);  
                         flag=1;
                     }
                     cs_p = cs_p->next;
@@ -737,6 +759,7 @@ void function_search() {
                 rs_p = head_rs;
                 printf("请输入查询条件(1——客人信息||2——车辆信息||3——租车时间范围)\n");
                 scanf("%d",&inf2);
+                fprintf(fp3,"订单编号,身份证号,客人姓名,手机号码,租用车辆编号,取车时间,预约还车时间,押金,实际还车时间,应缴费用,实缴费用\n");
                 if (inf2 ==1 ) { //客人信息查询
                     printf("请输入客人信息(不确定输入'-')\n");
                     printf("身份证号: ");
@@ -748,16 +771,27 @@ void function_search() {
                         if ( (kmp(rs.id,_id) || _id[0] == '-' ) && ( kmp(rs.phone,_phone) || _phone[0] == '-') ) {
                             flag = 1;
                             printf("\n");
+                            fprintf(fp3,"%s,",rs.RentNum);
                             printf("订单编号: %s\n",rs.RentNum);
+                            fprintf(fp3,"%s,",rs.id);
                             printf("身份证号: %s\n",rs.id);
+                            fprintf(fp3,"%s,",rs.name);
                             printf("客人姓名: %s\n",rs.name);
+                            fprintf(fp3,"%s,",rs.phone);
                             printf("手机号码: %s\n",rs.phone);
+                            fprintf(fp3,"%d,",rs.CarNum);
                             printf("租用车辆编号: %d\n",rs.CarNum);
+                            fprintf(fp3,"%s,",rs.TakeTime);
                             printf("取车时间: %s\n",rs.TakeTime); 
+                            fprintf(fp3,"%s,",rs.BackTime);
                             printf("预约还车时间: %s\n",rs.BackTime);
+                            fprintf(fp3,"%.2f,",rs.deposit);
                             printf("押金: %.2f\n",rs.deposit);
+                            fprintf(fp3,"%s,",rs.rBackTime);
                             printf("实际还车时间: %s\n",rs.rBackTime);
+                            fprintf(fp3,"%.2f,",rs.fee);
                             printf("应缴费用: %.2f\n",rs.fee);
+                            fprintf(fp3,"%.2f\n",rs.rfee);
                             printf("实缴费用: %.2f\n",rs.rfee);
                         }
                         rs_p = rs_p -> next;
@@ -783,18 +817,29 @@ void function_search() {
                         for (int i=0;i<_carnumr1;i++) {
                             if ( rs.CarNum == _carnumr[i]) {
                                 flag = 1;
-                                printf("\n");
-                                printf("订单编号: %s\n",rs.RentNum);
-                                printf("身份证号: %s\n",rs.id);
-                                printf("客人姓名: %s\n",rs.name);
-                                printf("手机号码: %s\n",rs.phone);
-                                printf("租用车辆编号: %d\n",rs.CarNum);
-                                printf("取车时间: %s\n",rs.TakeTime); 
-                                printf("预约还车时间: %s\n",rs.BackTime);
-                                printf("押金: %.2f\n",rs.deposit);
-                                printf("实际还车时间: %s\n",rs.rBackTime);
-                                printf("应缴费用: %.2f\n",rs.fee);
-                                printf("实缴费用: %.2f\n",rs.rfee);
+                            printf("\n");
+                            fprintf(fp3,"%s,",rs.RentNum);
+                            printf("订单编号: %s\n",rs.RentNum);
+                            fprintf(fp3,"%s,",rs.id);
+                            printf("身份证号: %s\n",rs.id);
+                            fprintf(fp3,"%s,",rs.name);
+                            printf("客人姓名: %s\n",rs.name);
+                            fprintf(fp3,"%s,",rs.phone);
+                            printf("手机号码: %s\n",rs.phone);
+                            fprintf(fp3,"%d,",rs.CarNum);
+                            printf("租用车辆编号: %d\n",rs.CarNum);
+                            fprintf(fp3,"%s,",rs.TakeTime);
+                            printf("取车时间: %s\n",rs.TakeTime); 
+                            fprintf(fp3,"%s,",rs.BackTime);
+                            printf("预约还车时间: %s\n",rs.BackTime);
+                            fprintf(fp3,"%.2f,",rs.deposit);
+                            printf("押金: %.2f\n",rs.deposit);
+                            fprintf(fp3,"%s,",rs.rBackTime);
+                            printf("实际还车时间: %s\n",rs.rBackTime);
+                            fprintf(fp3,"%.2f,",rs.fee);
+                            printf("应缴费用: %.2f\n",rs.fee);
+                            fprintf(fp3,"%.2f\n",rs.rfee);
+                            printf("实缴费用: %.2f\n",rs.rfee);
                             }
                         }
                         rs_p = rs_p -> next;
@@ -810,18 +855,29 @@ void function_search() {
                         RentStats rs = rs_p->next->rs;
                         if ( strcmp(_startime,rs.TakeTime)<=0 && strcmp(_endtime,rs.rBackTime)>=0 ) {
                                 flag = 1;
-                                printf("\n");
-                                printf("订单编号: %s\n",rs.RentNum);
-                                printf("身份证号: %s\n",rs.id);
-                                printf("客人姓名: %s\n",rs.name);
-                                printf("手机号码: %s\n",rs.phone);
-                                printf("租用车辆编号: %d\n",rs.CarNum);
-                                printf("取车时间: %s\n",rs.TakeTime); 
-                                printf("预约还车时间: %s\n",rs.BackTime);
-                                printf("押金: %.2f\n",rs.deposit);
-                                printf("实际还车时间: %s\n",rs.rBackTime);
-                                printf("应缴费用: %.2f\n",rs.fee);
-                                printf("实缴费用: %.2f\n",rs.rfee);
+                            printf("\n");
+                            fprintf(fp3,"%s,",rs.RentNum);
+                            printf("订单编号: %s\n",rs.RentNum);
+                            fprintf(fp3,"%s,",rs.id);
+                            printf("身份证号: %s\n",rs.id);
+                            fprintf(fp3,"%s,",rs.name);
+                            printf("客人姓名: %s\n",rs.name);
+                            fprintf(fp3,"%s,",rs.phone);
+                            printf("手机号码: %s\n",rs.phone);
+                            fprintf(fp3,"%d,",rs.CarNum);
+                            printf("租用车辆编号: %d\n",rs.CarNum);
+                            fprintf(fp3,"%s,",rs.TakeTime);
+                            printf("取车时间: %s\n",rs.TakeTime); 
+                            fprintf(fp3,"%s,",rs.BackTime);
+                            printf("预约还车时间: %s\n",rs.BackTime);
+                            fprintf(fp3,"%.2f,",rs.deposit);
+                            printf("押金: %.2f\n",rs.deposit);
+                            fprintf(fp3,"%s,",rs.rBackTime);
+                            printf("实际还车时间: %s\n",rs.rBackTime);
+                            fprintf(fp3,"%.2f,",rs.fee);
+                            printf("应缴费用: %.2f\n",rs.fee);
+                            fprintf(fp3," %.2f\n",rs.rfee);
+                            printf("实缴费用: %.2f\n",rs.rfee);
                         }
                         rs_p = rs_p->next;
                     }
@@ -832,6 +888,9 @@ void function_search() {
                 printf("信息选择错误 !\n");
                 break;
         }
+    fclose(fp1);
+    fclose(fp2);
+    fclose(fp3);
 } 
 
 void search_cartype() {} //查询车辆分类信息
@@ -1060,12 +1119,12 @@ void month_money() {
 
 }
 
-void year_money() {
+void ten_high() {
     char _cp[1001][PLATE_LENTH],_cm[1001][CARNAME_LENTH];
     float _mon1[1001],_rate[1001];
     int _mon2[1001];
     char _time[TIME_LENTH]={},_time2[TIME_LENTH]={},_time3[TIME_LENTH]={};
-    int k;
+    int k=0,pd=0;
     printf("请输入查看年份(格式: xxxx): ");
     scanf("%s",_time);
     for (int i=0;i<4;i++) {
@@ -1091,9 +1150,107 @@ void year_money() {
     while (rs_p->next !=NULL) {
         RentStats rs= rs_p->next->rs;
         if ( strcmp(rs.rBackTime,_time2)>=0 && strcmp(rs.rBackTime,_time3)<0 ) {
-            _mon2[k] = rs.CarNum;
-            _mon1[k] = rs.fee;
-            _rate[k] = rs.rBackTime - rs.TakeTime;
+            for (int i=0;i<k;i++) 
+                if (_mon2[i]==rs.CarNum) {
+                pd=1;
+                _rate[i] += calc_day(rs.TakeTime,rs.rBackTime);
+                break;
+            }
+            if (!pd) {
+                _mon2[k] = rs.CarNum;
+                _mon1[k] = rs.fee;
+                _rate[k++] =calc_day(rs.TakeTime,rs.rBackTime);
+            }
+            pd=0;
+        }
+        rs_p = rs_p->next;
+    }
+    while (cs_p->next !=NULL) {
+        CarStats cs = cs_p->next->cs;
+        for (int i=0;i<k;i++) {
+            if (cs.CarNum == _mon2[i]) {
+                strcpy(_cp[i],cs.plate);
+                strcpy(_cm[i],cs.CarName);
+            }
+        }
+        cs_p=cs_p->next;
+    }
+    for (int i=0;i<k;i++)
+        for (int j=k-1;j>i;j--) 
+            if (_rate[j] > _rate[j-1]) {
+                char _ct[30];
+                int pt1;
+                float pt2;
+                strcpy(_ct,_cp[j]);
+                strcpy(_cp[j],_cp[j-1]);
+                strcpy(_cp[j-1],_ct);
+                strcpy(_ct,_cm[j]);
+                strcpy(_cm[j],_cm[j-1]);
+                strcpy(_cm[j-1],_ct);
+                pt1=_mon2[j];
+                _mon2[j]=_mon2[j-1];
+                _mon2[j-1]=pt1;
+                pt2=_mon1[j];
+                _mon1[j]=_mon1[j-1];
+                _mon1[j-1]=pt2;
+                pt2=_rate[j];
+                _rate[j]=_rate[j-1];
+                _rate[j-1]=pt2;
+            }
+    printf("年份: %s年\n",_time);
+    printf("————————————————————————————————————————————————————————————————————\n");
+    printf("|   车牌号   |    车辆名称     |累计租用天数|  营业额  |  租用率   |\n");
+    printf("————————————————————————————————————————————————————————————————————\n");
+    for (int i = 0; i < 10; i++) {
+        printf("|  %8s  |   %12s  |    %4d    | %7.2f  |  %7.2f  |\n",_cp[i],_cm[i],(int)_rate[i],_mon1[i],_rate[i]/365.0);
+        printf("————————————————————————————————————————————————————————————————————\n");
+    }  
+}
+
+void year_money() {
+    char _cp[1001][PLATE_LENTH],_cm[1001][CARNAME_LENTH];
+    float _mon1[1001],_rate[1001];
+    int _mon2[1001];
+    char _time[TIME_LENTH]={},_time2[TIME_LENTH]={},_time3[TIME_LENTH]={};
+    int k=0,pd=0;
+    printf("请输入查看年份(格式: xxxx): ");
+    scanf("%s",_time);
+    for (int i=0;i<4;i++) {
+        _time3[i]=_time[i];
+        _time2[i]=_time[i];
+    }
+    _time2[4]=_time3[4]='/';
+    _time2[5]=_time2[6]='0';
+    _time3[5]=_time3[6]='9';
+    _time2[7]=_time3[7]='/';
+    _time2[8]=_time2[9]='0';
+    _time3[8]=_time3[9]='9';
+    _time2[10]=_time3[10]='-';
+    _time2[11]=_time2[12]='0';
+    _time3[11]=_time3[12]='9';
+    _time2[13]=_time3[13]=':';
+    _time2[14]=_time2[15]='0';
+    _time3[14]=_time3[15]='9';
+//    printf("%s\n",_time2);
+//    printf("%s\n",_time3);
+    RentStatsNode *rs_p = head_rs;
+    CarStatsNode *cs_p = head_cs;
+    while (rs_p->next !=NULL) {
+        RentStats rs= rs_p->next->rs;
+        if ( strcmp(rs.rBackTime,_time2)>=0 && strcmp(rs.rBackTime,_time3)<0 ) {
+            for (int i=0;i<k;i++) 
+                if (_mon2[i]==rs.CarNum) {
+//                printf("222222\n");
+                pd=1;
+                _rate[i] +=calc_day(rs.TakeTime,rs.rBackTime);
+                break;
+            }
+            if (!pd) {
+                _mon2[k] = rs.CarNum;
+                _mon1[k] = rs.fee;
+                _rate[k++] =calc_day(rs.TakeTime,rs.rBackTime);
+            }
+            pd=0;
         }
         rs_p = rs_p->next;
     }
@@ -1108,10 +1265,29 @@ void year_money() {
         cs_p=cs_p->next;
     }
     printf("年份: %s年\n",_time);
-    printf("————————————————————————————————————————————————\n");
-    printf("|  车牌号  |  车辆名称  |  营业额  |  租用率  |\n");
-    for 
+    printf("———————————————————————————————————————————————————————\n");
+    printf("|   车牌号    |   车辆名称     |  营业额  |   租用率  |\n");
+    printf("———————————————————————————————————————————————————————\n");
+    for (int i = 0; i < k; i++) {
+        printf("|  %8s  |   %12s  | %7.2f  |  %7.2f  |\n",_cp[i],_cm[i],_mon1[i],_rate[i]/365.0);
+        printf("———————————————————————————————————————————————————————\n");
+    }
 }
 
-void ten_high() {}
-
+int calc_day(char *a,char *b) {
+    char a_mon[TIME_LENTH],a_day[TIME_LENTH],b_mon[TIME_LENTH],b_day[TIME_LENTH];
+    int am,ad,bm,bd;
+    int sum=0;
+    strncpy(a_mon,a+5,2); strncpy(a_day,a+8,2);
+    strncpy(b_mon,b+5,2); strncpy(b_day,b+8,2);
+    am=atoi(a_mon); ad=atoi(a_day); bm=atoi(b_mon); bd=atoi(b_day);
+    if (am < bm) {
+      for (int i=am+1;i<bm;i++) {
+            sum+=mons[i];
+        }
+        sum+=mons[am]-ad;
+        sum+=bd;
+    }
+    if (am == bm) return bd-ad;
+    return sum;
+}

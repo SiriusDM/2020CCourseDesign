@@ -1,0 +1,1 @@
+cd "e:\DMoon\2020CCoursDesign\2020CCourseDesign\asd" && gcc main.c -o -lgdi32  main.exe -O2 -std=c11 -Wall -lm && .\main.exe
