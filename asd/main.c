@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "define.h"
 
@@ -46,6 +47,11 @@ void delete_ok();//ÐÅÏ¢É¾³ý³É¹¦
 void change_ok();//ÐÅÏ¢ÐÞ¸Ä³É¹¦
 int kmp(char* s, char* p); //kmpËã·¨
 void search_not();//²éÑ¯Ê§°Ü
+void data_analyze();
+void cartype_inf();
+void month_money();
+void year_money();
+void ten_high();
 //Êä³öµ÷ÊÔÓÃ
 void watch_cartype(); 
 void watch_carstats();
@@ -333,6 +339,8 @@ void function_select(int func_type) {
             break;
         case 4:
             function_search();
+        case 5:
+            data_analyze();
             break;
     }
 }
@@ -933,4 +941,177 @@ int kmp(char* s, char* p)  {
 void search_not() {
     printf("ºÜ±§Ç¸£¡Ã»ÓÐ·ûºÏÄúÒªÇóµÄ³µÁ¾\n");
 }
+
+void data_analyze() {
+    int inf;
+    printf("ÇëÊäÈëÄúÏë²é¿´µÄÊý¾Ý·ÖÎö(1¡ª¡ª³µÐÍ»ù±¾ÐÅÏ¢||2¡ª¡ª³µÐÍµ±ÔÂÓªÒµ¶î||3¡ª¡ª³µÁ¾È«ÄêÓªÒµ¶î||4¡ª¡ª10¿îÈÈ×â³µ): ");
+    scanf("%d",&inf);
+    switch (inf) {  
+        case 1:
+            cartype_inf();
+            break;
+        case 2:
+            month_money();
+            break;
+        case 3:
+            year_money();
+            break;
+        case 4:
+            ten_high();
+            break;
+        default:
+            printf("Êý¾Ý·ÖÎö²é¿´´íÎó");
+            break;
+    }
+
+}
+
+void cartype_inf() {
+    CarStatsNode *cs_p = head_cs;
+    int _amount[6],_y[6],_n[6];
+    memset(_amount, 0, sizeof(_amount));
+    memset(_y, 0, sizeof(_y));
+    memset(_n, 0, sizeof(_n));
+    while (cs_p->next !=NULL) {
+        CarStats cs = cs_p->next->cs;
+        int cd=(int)cs.code-'0';
+//        printf("%d %c\n",cd,cs.stats);
+        _amount[cd]++;
+        if (cs.stats == 'y') _y[cd]++;
+        else _n[cd]++;
+        cs_p = cs_p->next;
+    }
+    time_t currentTm = time(NULL);		
+	printf("\nÍ³¼ÆÊ±¼ä:%s",asctime(localtime(&currentTm)));
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("| ³µÁ¾ÀàÐÍ | ³µÁ¾×ÜÊý | ÒÑ³ö×âÊý | Î´³ö×âÊý |\n" );
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|  ¾­¼ÃÐÍ  | %4d     | %4d     | %4d     |\n",_amount[1],_y[1],_n[1]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|  ÉÌÎñÐÍ  | %4d     | %4d     | %4d     |\n",_amount[2],_y[2],_n[2]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|  ºÀ»ªÐÍ  | %4d     | %4d     | %4d     |\n",_amount[3],_y[3],_n[3]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|   SUV    | %4d     | %4d     | %4d     |\n",_amount[4],_y[4],_n[4]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("| 7×ù¼°ÒÔÉÏ| %4d     | %4d     | %4d     |\n",_amount[5],_y[5],_n[5]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|   ×Ü¼Æ   | %4d     | %4d     | %4d     |\n",_amount[1]+_amount[2]+_amount[3]+_amount[4]+_amount[5],_y[1]+_y[2]+_y[3]+_y[4]+_y[5],_n[1]+_n[2]+_n[3]+_n[4]+_n[5]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+}
+
+void month_money() {
+    int _carmon1[10010],k=0;
+    float _money[10],_carmon2[10010];
+    char _time[TIME_LENTH]={},_time2[TIME_LENTH]={},_time3[TIME_LENTH]={};
+    memset(_money,0,sizeof(_money));
+    printf("ÇëÊäÈëÄêÔÂ(¸ñÊ½:xxxx/xx): ");
+    scanf("%s",_time);
+    for (int i=0;i<=6;i++) {
+        _time2[i] = _time[i];
+        _time3[i] = _time[i];
+    }
+    _time2[7]=_time3[7]='/';
+    _time2[8]=_time2[9]='0';
+    _time3[8]=_time3[9]='9';
+    _time2[10]=_time3[10]='-';
+    _time2[11]=_time2[12]='0';
+    _time3[11]=_time3[12]='9';
+    _time2[13]=_time3[13]=':';
+    _time2[14]=_time2[15]='0';
+    _time3[14]=_time3[15]='9';
+//    printf("%s\n",_time2);
+//    printf("%s\n",_time3);
+    RentStatsNode *rs_p = head_rs;
+    CarStatsNode *cs_p = head_cs;
+    while (rs_p->next !=NULL) {
+        RentStats rs= rs_p->next->rs;
+        if ( strcmp(rs.rBackTime,_time2)>=0 && strcmp(rs.rBackTime,_time3)<0 ) {
+            _carmon1[k] = rs.CarNum;
+            _carmon2[k++] = rs.rfee;
+        }
+        rs_p = rs_p->next;
+    }
+ /*   for (int i=0;i<k;i++) {
+        printf("%d %.2f",_carmon1[i],_carmon2[i]);
+    }*/
+    while (cs_p->next !=NULL) {
+        CarStats cs = cs_p->next->cs;
+        for (int i=0;i<k;i++) {
+            if (cs.CarNum == _carmon1[i]) 
+                _money[cs.code-'0']+=_carmon2[i];
+        }
+        cs_p=cs_p->next;
+    }
+    printf("Í³¼ÆÊ±¼ä: %s    ¼ÆÁ¿µ¥Î»: ÔªÈËÃñ±Ò\n",_time);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|  ³µÁ¾ÀàÐÍ   |    ÓªÒµ¶î   |\n");
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|   ¾­¼ÃÐÍ    |   %7.2f   |\n",_money[1]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|   ÉÌÎñÐÍ    |   %7.2f   |\n",_money[2]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|   ºÀ»ªÐÍ    |   %7.2f   |\n",_money[3]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|    SUV      |   %7.2f   |\n",_money[4]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|  Æß×ù¼°ÒÔÉÏ |   %7.2f   |\n",_money[5]);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+
+}
+
+void year_money() {
+    char _cp[1001][PLATE_LENTH],_cm[1001][CARNAME_LENTH];
+    float _mon1[1001],_rate[1001];
+    int _mon2[1001];
+    char _time[TIME_LENTH]={},_time2[TIME_LENTH]={},_time3[TIME_LENTH]={};
+    int k;
+    printf("ÇëÊäÈë²é¿´Äê·Ý(¸ñÊ½: xxxx): ");
+    scanf("%s",_time);
+    for (int i=0;i<4;i++) {
+        _time3[i]=_time[i];
+        _time2[i]=_time[i];
+    }
+    _time2[4]=_time3[4]='/';
+    _time2[5]=_time2[6]='0';
+    _time3[5]=_time3[6]='9';
+    _time2[7]=_time3[7]='/';
+    _time2[8]=_time2[9]='0';
+    _time3[8]=_time3[9]='9';
+    _time2[10]=_time3[10]='-';
+    _time2[11]=_time2[12]='0';
+    _time3[11]=_time3[12]='9';
+    _time2[13]=_time3[13]=':';
+    _time2[14]=_time2[15]='0';
+    _time3[14]=_time3[15]='9';
+//    printf("%s\n",_time2);
+//    printf("%s\n",_time3);
+    RentStatsNode *rs_p = head_rs;
+    CarStatsNode *cs_p = head_cs;
+    while (rs_p->next !=NULL) {
+        RentStats rs= rs_p->next->rs;
+        if ( strcmp(rs.rBackTime,_time2)>=0 && strcmp(rs.rBackTime,_time3)<0 ) {
+            _mon2[k] = rs.CarNum;
+            _mon1[k] = rs.fee;
+            _rate[k] = rs.rBackTime - rs.TakeTime;
+        }
+        rs_p = rs_p->next;
+    }
+    while (cs_p->next !=NULL) {
+        CarStats cs = cs_p->next->cs;
+        for (int i=0;i<k;i++) {
+            if (cs.CarNum == _mon2[i]) {
+                strcpy(_cp[i],cs.plate);
+                strcpy(_cm[i],cs.CarName);
+            }
+        }
+        cs_p=cs_p->next;
+    }
+    printf("Äê·Ý: %sÄê\n",_time);
+    printf("¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª\n");
+    printf("|  ³µÅÆºÅ  |  ³µÁ¾Ãû³Æ  |  ÓªÒµ¶î  |  ×âÓÃÂÊ  |\n");
+    for 
+}
+
+void ten_high() {}
 
